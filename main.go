@@ -1,0 +1,12 @@
+package main
+
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/mytheta/gin_api/controller"
+)
+
+func main() {
+	r := gin.Default()
+	r.POST("/book", controller.Book.Create)
+	r.Run(":8000")
+}
