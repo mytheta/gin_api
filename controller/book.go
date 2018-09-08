@@ -34,3 +34,13 @@ func (b *bookimpl) Create(c *gin.Context) {
 		"message": "ユーザー作成成功",
 	})
 }
+
+func (b *bookimpl) FindAll(c *gin.Context){
+	books, err := service.Book.FindAll()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, nil)
+		return
+	}
+
+	c.JSON(http.StatusOK, books)
+}

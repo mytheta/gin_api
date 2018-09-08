@@ -13,3 +13,7 @@ type bookimpl struct {
 func (b *bookimpl) Create(book model.Book) error{
 	return repository.Book.Create(book)
 }
+
+func (b *bookimpl) FindAll(book model.Book) ([]model.Book,error) {
+	return repository.Book.FindAll()
+}
