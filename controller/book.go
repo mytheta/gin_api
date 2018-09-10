@@ -6,6 +6,7 @@ import (
 	"github.com/mytheta/gin_api/service"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 var Book = bookimpl{}
@@ -44,3 +45,46 @@ func (b *bookimpl) FindAll(c *gin.Context){
 
 	c.JSON(http.StatusOK, books)
 }
+
+func (b *bookimpl) Update(c *gin.Context){
+	var book model.Book
+	err := c.BindJSON(&book)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError,err)
+		return
+	}
+
+	err = service.Book.Update(book)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError,err)
+		return
+	}
+
+	c.JSON(http.StatusOK,gin.H{"message":"編集できました,"})
+
+}
+
+func (b *bookimpl) Delete(c *gin.Context){
+	id,err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError,nil)
+		return
+	}
+
+	ok,err := service.Book.IsExistByID(uint(id))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError,nil)
+		return
+	}
+	if !ok {
+		c.JSON(http.StatusNotFound,nil)
+	}
+
+	err = service.Book.Delete(uint(id))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError,nil)
+		return
+	}
+
+	c.JSON(http.StatusOK,gin.H{"message":"削除成功"})
+	}

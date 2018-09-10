@@ -18,3 +18,9 @@ func (b *bookimpl) FindAll() ([]model.Book,error) {
 	err := db.Find(&books).Error
 	return books, err
 }
+
+func (b *bookimpl) Update(book model.Book) error {
+	err := db.Save(&book).Error
+	return err
+}
+}

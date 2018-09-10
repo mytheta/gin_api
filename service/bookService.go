@@ -14,6 +14,18 @@ func (b *bookimpl) Create(book model.Book) error{
 	return repository.Book.Create(book)
 }
 
-func (b *bookimpl) FindAll(book model.Book) ([]model.Book,error) {
+func (b *bookimpl) FindAll()  ([]model.Book,error) {
 	return repository.Book.FindAll()
+}
+
+func (b *bookimpl) Update(book model.Book)  error {
+	return repository.Book.Update(book)
+}
+
+func (b *bookimpl) Delete(id uint) error {
+	return repository.Book.Delete(id)
+}
+
+func (b *bookimpl) IsExistByID(id uint) (bool,error) {
+	return repository.Book.IsExistByID(id)
 }
