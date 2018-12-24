@@ -1,4 +1,0 @@
-development:
-  DB_USER: root
-  DB_PASS: password
-  DB_CONN: localhost:3308
