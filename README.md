@@ -12,4 +12,3 @@ DELETE  /book/@:id     削除
 ```
 docker-compose up
 ```
-itg
