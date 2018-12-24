@@ -32,7 +32,7 @@ func (b *bookimpl) Create(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "ユーザー作成成功",
+		"message": "本登録成功",
 	})
 }
 
