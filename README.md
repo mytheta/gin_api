@@ -8,4 +8,8 @@ PUT     /book/@:id     更新
 DELETE  /book/@:id     削除
 ```
 
-
+## Dockerで動かす
+```
+docker-compose up
+```
+itg
