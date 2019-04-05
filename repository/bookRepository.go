@@ -1,37 +1,50 @@
 package repository
 
 import (
+	"github.com/jinzhu/gorm"
 	"github.com/mytheta/gin_api/model"
 )
-var Book = bookimpl{}
 
-type bookimpl struct {
+type BookRepository interface {
+	Create(book model.Book) error
+	FindAll() ([]model.Book, error)
+	Update(book model.Book) error
+	Delete(id uint) error
+	IsExistByID(id uint) (bool, error)
 }
 
-func (b *bookimpl) Create(book model.Book) error {
-	err := db.Create(&book).Error
+type bookRepository struct {
+	db *gorm.DB
+}
+
+func NewBookRepository(db *gorm.DB) BookRepository {
+	return &bookRepository{db: db}
+}
+
+func (b *bookRepository) Create(book model.Book) error {
+	err := b.db.Create(&book).Error
 	return err
 }
 
-func (b *bookimpl) FindAll() ([]model.Book,error) {
+func (b *bookRepository) FindAll() ([]model.Book, error) {
 	var books []model.Book
-	err := db.Find(&books).Error
+	err := b.db.Find(&books).Error
 	return books, err
 }
 
-func (b *bookimpl) Update(book model.Book) error {
-	err := db.Save(&book).Error
+func (b *bookRepository) Update(book model.Book) error {
+	err := b.db.Save(&book).Error
 	return err
 }
 
-func (b *bookimpl) Delete(id uint) error {
+func (b *bookRepository) Delete(id uint) error {
 	book := model.Book{}
-	err :=  db.Delete(&book,id).Error
+	err := b.db.Delete(&book, id).Error
 	return err
 }
 
-func (b *bookimpl) IsExistByID(id uint) (bool,error){
+func (b *bookRepository) IsExistByID(id uint) (bool, error) {
 	var books []model.Book
-	err := db.Where("id = ?",id).Find(&books).Error
-	return len(books) >= 1,err
+	err := b.db.Where("id = ?", id).Find(&books).Error
+	return len(books) >= 1, err
 }

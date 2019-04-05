@@ -5,27 +5,38 @@ import (
 	"github.com/mytheta/gin_api/repository"
 )
 
-var Book = bookimpl{}
-
-type bookimpl struct {
+type BookService interface {
+	Create(book model.Book) error
+	FindAll() ([]model.Book, error)
+	Update(book model.Book) error
+	Delete(id uint) error
+	IsExistByID(id uint) (bool, error)
 }
 
-func (b *bookimpl) Create(book model.Book) error{
-	return repository.Book.Create(book)
+type bookService struct {
+	repository.BookRepository
 }
 
-func (b *bookimpl) FindAll()  ([]model.Book,error) {
-	return repository.Book.FindAll()
+func NewBookService(r repository.BookRepository) BookService {
+	return &bookService{r}
 }
 
-func (b *bookimpl) Update(book model.Book)  error {
-	return repository.Book.Update(book)
+func (b *bookService) Create(book model.Book) error {
+	return b.BookRepository.Create(book)
 }
 
-func (b *bookimpl) Delete(id uint) error {
-	return repository.Book.Delete(id)
+func (b *bookService) FindAll() ([]model.Book, error) {
+	return b.BookRepository.FindAll()
 }
 
-func (b *bookimpl) IsExistByID(id uint) (bool,error) {
-	return repository.Book.IsExistByID(id)
+func (b *bookService) Update(book model.Book) error {
+	return b.BookRepository.Update(book)
+}
+
+func (b *bookService) Delete(id uint) error {
+	return b.BookRepository.Delete(id)
+}
+
+func (b *bookService) IsExistByID(id uint) (bool, error) {
+	return b.BookRepository.IsExistByID(id)
 }

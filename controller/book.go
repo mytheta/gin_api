@@ -1,20 +1,31 @@
 package controller
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/mytheta/gin_api/model"
-	"github.com/mytheta/gin_api/service"
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
+	"github.com/mytheta/gin_api/model"
+	"github.com/mytheta/gin_api/service"
 )
 
-var Book = bookimpl{}
-
-type bookimpl struct {
+type BookController interface {
+	Create(c *gin.Context)
+	FindAll(c *gin.Context)
+	Update(c *gin.Context)
+	Delete(c *gin.Context)
 }
 
-func (b *bookimpl) Create(c *gin.Context) {
+type bookController struct {
+	bookService service.BookService
+}
+
+func NewBookController(s service.BookService) BookController {
+	return &bookController{bookService: s}
+}
+
+func (b *bookController) Create(c *gin.Context) {
 
 	var book model.Book
 	err := c.BindJSON(&book)
@@ -24,7 +35,7 @@ func (b *bookimpl) Create(c *gin.Context) {
 		return
 	}
 
-	err = service.Book.Create(book)
+	err = b.bookService.Create(book)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, err)
@@ -36,8 +47,8 @@ func (b *bookimpl) Create(c *gin.Context) {
 	})
 }
 
-func (b *bookimpl) FindAll(c *gin.Context){
-	books, err := service.Book.FindAll()
+func (b *bookController) FindAll(c *gin.Context) {
+	books, err := b.bookService.FindAll()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, nil)
 		return
@@ -46,45 +57,45 @@ func (b *bookimpl) FindAll(c *gin.Context){
 	c.JSON(http.StatusOK, books)
 }
 
-func (b *bookimpl) Update(c *gin.Context){
+func (b *bookController) Update(c *gin.Context) {
 	var book model.Book
 	err := c.BindJSON(&book)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError,err)
+		c.JSON(http.StatusInternalServerError, err)
 		return
 	}
 
-	err = service.Book.Update(book)
+	err = b.bookService.Update(book)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError,err)
+		c.JSON(http.StatusInternalServerError, err)
 		return
 	}
 
-	c.JSON(http.StatusOK,gin.H{"message":"編集できました,"})
+	c.JSON(http.StatusOK, gin.H{"message": "編集できました,"})
 
 }
 
-func (b *bookimpl) Delete(c *gin.Context){
-	id,err := strconv.Atoi(c.Param("id"))
+func (b *bookController) Delete(c *gin.Context) {
+	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError,nil)
+		c.JSON(http.StatusInternalServerError, nil)
 		return
 	}
 
-	ok,err := service.Book.IsExistByID(uint(id))
+	ok, err := b.bookService.IsExistByID(uint(id))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError,nil)
+		c.JSON(http.StatusInternalServerError, nil)
 		return
 	}
 	if !ok {
-		c.JSON(http.StatusNotFound,nil)
+		c.JSON(http.StatusNotFound, nil)
 	}
 
-	err = service.Book.Delete(uint(id))
+	err = b.bookService.Delete(uint(id))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError,nil)
+		c.JSON(http.StatusInternalServerError, nil)
 		return
 	}
 
-	c.JSON(http.StatusOK,gin.H{"message":"削除成功"})
-	}
+	c.JSON(http.StatusOK, gin.H{"message": "削除成功"})
+}
